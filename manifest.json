@@ -1,0 +1,15 @@
+{
+  "name": "Habit Hawk System",
+  "short_name": "HabitHawk",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#fdfcf0",
+  "theme_color": "#d4a373",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3039/3039527.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
