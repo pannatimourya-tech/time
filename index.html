@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit Hawk Offline</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        :root { --primary: #d4a373; --bg: #fdfcf0; --green: #2ecc71; }
+        body { font-family: sans-serif; background: var(--bg); padding: 20px; text-align: center; }
+        .dashboard { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin: 20px 0; }
+        .day { aspect-ratio: 1; background: #eee; border-radius: 3px; cursor: pointer; }
+        .day.active { background: var(--green); }
+        .stats { font-weight: bold; font-size: 1.2rem; color: var(--primary); }
+        button { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <h1>HABIT HAWK™</h1>
+        <div class="stats">Streak: <span id="streak">0</span> Days</div>
+        <div class="grid" id="grid"></div>
+        <button onclick="resetData()">Clear All Data</button>
+    </div>
+
+    <script>
+        const grid = document.getElementById('grid');
+        let data = JSON.parse(localStorage.getItem('hawk_offline_365')) || new Array(365).fill(0);
+
+        function render() {
+            grid.innerHTML = '';
+            let streak = 0;
+            data.forEach((val, i) => {
+                const d = document.createElement('div');
+                d.className = 'day' + (val ? ' active' : '');
+                d.onclick = () => { data[i] = data[i] ? 0 : 1; save(); };
+                grid.appendChild(d);
+            });
+            // Simple streak logic
+            for(let i = data.length-1; i>=0; i--) { if(data[i]) streak++; else if(streak>0) break; }
+            document.getElementById('streak').innerText = streak;
+        }
+
+        function save() {
+            localStorage.setItem('hawk_offline_365', JSON.stringify(data));
+            render();
+        }
+
+        function resetData() { if(confirm("Reset?")) { data = new Array(365).fill(0); save(); } }
+
+        // Register Service Worker for OFFLINE use
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+
+        render();
+    </script>
+</body>
+</html>
